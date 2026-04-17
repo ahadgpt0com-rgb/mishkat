@@ -16,7 +16,7 @@ const getAuthHeaders = () => {
 // Default Configuration (Fallback)
 const DEFAULT_CONFIG: WebsiteConfig = {
   hero: {
-    groomName: 'রাজ',
+    groomName: 'মিশকাত',
     brideName: 'সিমরান',
     date: '১৫ই ডিসেম্বর, ২০২৪',
     location: 'ঢাকা, বাংলাদেশ',
