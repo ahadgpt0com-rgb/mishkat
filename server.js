@@ -12,8 +12,9 @@ const __dirname = path.dirname(__filename);
 async function startServer() {
   const app = express();
   const PORT = 3000;
-  const DB_PATH = path.join(__dirname, 'database.json');
-  const UPLOAD_DIR = path.join(__dirname, 'image');
+  const isVercel = process.env.VERCEL === '1';
+  const DB_PATH = isVercel ? '/tmp/database.json' : path.join(__dirname, 'database.json');
+  const UPLOAD_DIR = isVercel ? '/tmp/image' : path.join(__dirname, 'image');
 
   if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR);
   if (!fs.existsSync(DB_PATH)) {
@@ -196,9 +197,14 @@ async function startServer() {
       res.status(500).json({ message: "Server Error" });
   });
 
-  app.listen(PORT, "0.0.0.0", () => {
-      console.log(`Server running on http://localhost:${PORT}`);
-  });
+  if (!isVercel) {
+    app.listen(PORT, "0.0.0.0", () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+    });
+  }
+
+  return app;
 }
 
-startServer();
+const appPromise = startServer();
+export default appPromise;
