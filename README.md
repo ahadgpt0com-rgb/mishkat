@@ -1,11 +1,39 @@
-<div align="center">
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+# শুভ বিবাহ (Shubho Bibaho) - Wedding Website
 
-  <h1>Built with AI Studio</h2>
+A complete, responsive wedding website built with React and TypeScript.
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## Features
+- RSVP Management
+- Admin Dashboard
+- Event Schedule
+- Photo Gallery
+- Google Maps Integration
+- Persistent Data (IndexedDB)
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## Setup Instructions
 
-</div>
+1. **Install Node.js**: Download and install Node.js from https://nodejs.org/
+
+2. **Install Dependencies**:
+   Open your terminal in the project folder and run:
+   ```bash
+   npm install
+   ```
+
+3. **Run Locally**:
+   Start the development server:
+   ```bash
+   npm run dev
+   ```
+   The site will open at `http://localhost:3000`.
+
+4. **Build for Production**:
+   ```bash
+   npm run build
+   ```
+
+## Admin Credentials
+- **URL**: `/admin` (e.g., `http://localhost:3000/#/admin`)
+- **Username**: `11`
+- **Password**: `00`
