@@ -33,7 +33,7 @@ const Home: React.FC = () => {
   }
 
   return (
-    <PinAuth correctPin="1234">
+    <PinAuth correctPin={config.pinCode || '1234'}>
       <div className="font-sans text-slate-800 overflow-x-hidden w-full relative">
         <Navbar />
         <Hero data={config.hero} />

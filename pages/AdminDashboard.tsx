@@ -5,7 +5,7 @@ import { uploadImage } from '../services/api';
 import { WebsiteConfig, EventItem } from '../types';
 import { 
     Save, Upload, Loader2, Trash2, Edit3, Image as ImageIcon, 
-    Plus, LayoutTemplate, Clock, BookOpen, Calendar, Phone, MapPin 
+    Plus, LayoutTemplate, Clock, BookOpen, Calendar, Phone, MapPin, Lock 
 } from 'lucide-react';
 
 // --- Reusable Sub-components ---
@@ -194,6 +194,7 @@ const AdminDashboard: React.FC = () => {
           <TabButton id="events" activeTab={activeTab} setActiveTab={setActiveTab} label="Events" icon={Calendar} />
           <TabButton id="gallery" activeTab={activeTab} setActiveTab={setActiveTab} label="Gallery" icon={ImageIcon} />
           <TabButton id="contact" activeTab={activeTab} setActiveTab={setActiveTab} label="Contact Info" icon={Phone} />
+          <TabButton id="security" activeTab={activeTab} setActiveTab={setActiveTab} label="Security" icon={Lock} />
       </div>
 
       {/* --- Tab Contents --- */}
@@ -415,6 +416,36 @@ const AdminDashboard: React.FC = () => {
                         <InputGroup label="Longitude" value={config.contact.longitude || ''} onChange={(e:any) => handleFieldChange('contact', 'longitude', e.target.value)} />
                     </div>
                     <p className="text-xs text-slate-400 mt-2">These coordinates are used to generate the Google Maps link.</p>
+                 </div>
+             </div>
+          </div>
+      )}
+
+      {/* SECURITY SECTION */}
+      {activeTab === 'security' && (
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 animate-fade-in max-w-3xl">
+             <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <Lock className="text-rose-500" /> Security
+             </h3>
+             <div className="space-y-5">
+                 <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <h4 className="text-lg font-bold text-slate-800 mb-2">Guest Access PIN</h4>
+                    <p className="text-sm text-slate-500 mb-4">
+                      This is the 4-digit code guests enter to view your website. 
+                      Change this to lock out previous guests until they enter the new PIN.
+                    </p>
+                    <div className="max-w-xs">
+                        <InputGroup 
+                          label="4-Digit PIN Code" 
+                          value={config.pinCode || '1234'} 
+                          type="text"
+                          onChange={(e:any) => {
+                             // Only allow exactly 4 digits
+                             const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                             setConfig({...config, pinCode: val});
+                          }} 
+                        />
+                    </div>
                  </div>
              </div>
           </div>

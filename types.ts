@@ -42,6 +42,7 @@ export interface WebsiteConfig {
     image: string;
   };
   countdownDate: string;
+  pinCode?: string;
   stories: {
     year: string;
     title: string;

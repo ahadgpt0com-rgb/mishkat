@@ -23,6 +23,7 @@ const DEFAULT_CONFIG: WebsiteConfig = {
     image: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
   },
   countdownDate: '2024-12-15T18:00:00',
+  pinCode: '1234',
   stories: [
     {
       year: '২০২০',

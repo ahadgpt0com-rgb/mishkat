@@ -8,11 +8,20 @@ interface PinAuthProps {
 
 const PinAuth: React.FC<PinAuthProps> = ({ children, correctPin }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('guest_auth_pin') === 'true';
+    return localStorage.getItem('guest_auth_pin') === correctPin;
   });
   const [pin, setPin] = useState(['', '', '', '']);
   const [error, setError] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // Effect to handle when correctPin changes from the backend
+  useEffect(() => {
+    if (localStorage.getItem('guest_auth_pin') !== correctPin) {
+      setIsAuthenticated(false);
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [correctPin]);
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
@@ -43,7 +52,7 @@ const PinAuth: React.FC<PinAuthProps> = ({ children, correctPin }) => {
 
   const checkPin = (enteredPin: string) => {
     if (enteredPin === correctPin) {
-      localStorage.setItem('guest_auth_pin', 'true');
+      localStorage.setItem('guest_auth_pin', enteredPin);
       setTimeout(() => setIsAuthenticated(true), 300);
     } else {
       setError(true);
