@@ -113,7 +113,7 @@ const RSVP: React.FC<RSVPProps> = ({ groomName, brideName, date, location }) => 
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-wedding-primary focus:border-transparent outline-none transition-all"
+                      className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-wedding-primary focus:border-transparent outline-none transition-all text-base"
                       placeholder="আপনার পুরো নাম"
                     />
                   </div>
@@ -129,7 +129,7 @@ const RSVP: React.FC<RSVPProps> = ({ groomName, brideName, date, location }) => 
                         required
                         value={formData.phone}
                         onChange={handleChange}
-                        className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-wedding-primary focus:border-transparent outline-none transition-all"
+                        className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-wedding-primary focus:border-transparent outline-none transition-all text-base"
                         placeholder="মোবাইল নম্বর"
                       />
                     </div>
@@ -138,7 +138,7 @@ const RSVP: React.FC<RSVPProps> = ({ groomName, brideName, date, location }) => 
                         name="guestsCount"
                         value={formData.guestsCount}
                         onChange={handleChange}
-                        className="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-wedding-primary focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                        className="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-wedding-primary focus:border-transparent outline-none transition-all appearance-none cursor-pointer text-base"
                       >
                         {[1, 2, 3, 4, 5, 6].map(num => (
                           <option key={num} value={num}>{num} জন অতিথি</option>
@@ -159,7 +159,7 @@ const RSVP: React.FC<RSVPProps> = ({ groomName, brideName, date, location }) => 
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-wedding-primary focus:border-transparent outline-none transition-all"
+                      className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-wedding-primary focus:border-transparent outline-none transition-all text-base"
                       placeholder="ইমেইল (ঐচ্ছিক)"
                     />
                   </div>
@@ -169,7 +169,7 @@ const RSVP: React.FC<RSVPProps> = ({ groomName, brideName, date, location }) => 
                     rows={3}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-wedding-primary focus:border-transparent outline-none transition-all"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-wedding-primary focus:border-transparent outline-none transition-all text-base"
                     placeholder="শুভকামনা বা বার্তা..."
                   ></textarea>
                 </div>

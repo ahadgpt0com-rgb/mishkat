@@ -12,7 +12,7 @@ import Settings from './pages/Settings';
 
 const App: React.FC = () => {
   return (
-    <HashRouter>
+    <HashRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Routes>
         <Route path="/" element={<Home />} />
         

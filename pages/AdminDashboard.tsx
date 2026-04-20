@@ -8,6 +8,40 @@ import {
     Plus, LayoutTemplate, Clock, BookOpen, Calendar, Phone, MapPin 
 } from 'lucide-react';
 
+// --- Reusable Sub-components ---
+const ProgressOverlay = ({ percent }: { percent: number }) => (
+  <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white rounded z-20">
+    <Loader2 className="animate-spin mb-2" size={24} />
+    <span className="text-xs font-bold">{percent}%</span>
+  </div>
+);
+
+const TabButton = ({ id, activeTab, setActiveTab, label, icon: Icon }: any) => (
+    <button 
+      onClick={() => setActiveTab(id)}
+      className={`flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all ${
+          activeTab === id 
+          ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/20' 
+          : 'bg-white text-slate-600 hover:bg-slate-100'
+      }`}
+    >
+        <Icon size={18} />
+        {label}
+    </button>
+);
+
+const InputGroup = ({ label, value, onChange, type = "text" }: any) => (
+    <div>
+        <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">{label}</label>
+        <input 
+          type={type} 
+          value={value} 
+          onChange={onChange} 
+          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition-all" 
+        />
+    </div>
+);
+
 const AdminDashboard: React.FC = () => {
   const [config, setConfig] = useState<WebsiteConfig | null>(null);
   const [saving, setSaving] = useState(false);
@@ -133,41 +167,6 @@ const AdminDashboard: React.FC = () => {
     else alert('Failed to save changes.');
   };
 
-  // --- Render Helpers ---
-
-  const ProgressOverlay = ({ percent }: { percent: number }) => (
-    <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white rounded z-20">
-      <Loader2 className="animate-spin mb-2" size={24} />
-      <span className="text-xs font-bold">{percent}%</span>
-    </div>
-  );
-
-  const TabButton = ({ id, label, icon: Icon }: any) => (
-      <button 
-        onClick={() => setActiveTab(id)}
-        className={`flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all ${
-            activeTab === id 
-            ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/20' 
-            : 'bg-white text-slate-600 hover:bg-slate-100'
-        }`}
-      >
-          <Icon size={18} />
-          {label}
-      </button>
-  );
-
-  const InputGroup = ({ label, value, onChange, type = "text" }: any) => (
-      <div>
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">{label}</label>
-          <input 
-            type={type} 
-            value={value} 
-            onChange={onChange} 
-            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition-all" 
-          />
-      </div>
-  );
-
   if (!config) return <div className="flex h-96 items-center justify-center"><Loader2 className="animate-spin text-rose-600" size={48} /></div>;
 
   return (
@@ -190,11 +189,11 @@ const AdminDashboard: React.FC = () => {
 
       {/* Navigation Tabs */}
       <div className="flex flex-wrap gap-3">
-          <TabButton id="hero" label="Hero & Intro" icon={LayoutTemplate} />
-          <TabButton id="story" label="Our Story" icon={BookOpen} />
-          <TabButton id="events" label="Events" icon={Calendar} />
-          <TabButton id="gallery" label="Gallery" icon={ImageIcon} />
-          <TabButton id="contact" label="Contact Info" icon={Phone} />
+          <TabButton id="hero" activeTab={activeTab} setActiveTab={setActiveTab} label="Hero & Intro" icon={LayoutTemplate} />
+          <TabButton id="story" activeTab={activeTab} setActiveTab={setActiveTab} label="Our Story" icon={BookOpen} />
+          <TabButton id="events" activeTab={activeTab} setActiveTab={setActiveTab} label="Events" icon={Calendar} />
+          <TabButton id="gallery" activeTab={activeTab} setActiveTab={setActiveTab} label="Gallery" icon={ImageIcon} />
+          <TabButton id="contact" activeTab={activeTab} setActiveTab={setActiveTab} label="Contact Info" icon={Phone} />
       </div>
 
       {/* --- Tab Contents --- */}
