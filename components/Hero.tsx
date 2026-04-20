@@ -11,7 +11,7 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
   const isVideo = (url: string) => url?.toLowerCase().match(/\.(mp4|mkv|webm)$/);
 
   return (
-    <div id="home" className="relative h-screen w-full flex items-center justify-center overflow-hidden">
+    <div id="home" className="relative h-screen w-full flex flex-col items-center justify-end pb-28 md:pb-32 overflow-hidden">
       {/* Background Media */}
       <div className="absolute inset-0 z-0">
         {isVideo(data.image) ? (
@@ -37,27 +37,27 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
       {/* Content */}
       <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
         <div className="animate-fade-in-up">
-          <p className="text-lg md:text-2xl mb-6 font-serif tracking-[0.3em] uppercase text-rose-200">
+          <p className="text-lg md:text-2xl mb-3 font-serif tracking-[0.3em] uppercase text-rose-200">
             আমরা বিয়ে করছি
           </p>
           
-          <h2 className="text-6xl md:text-9xl font-cursive mb-6 text-white drop-shadow-2xl leading-tight">
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-cursive mb-3 text-white drop-shadow-2xl leading-tight">
             {data.groomName} <span className="text-wedding-primary mx-2">&</span> {data.brideName}
           </h2>
           
-          <div className="flex items-center justify-center gap-4 mb-8 opacity-80">
+          <div className="flex items-center justify-center gap-4 mb-5 opacity-80">
             <div className="h-[1px] w-12 md:w-24 bg-white"></div>
             <div className="w-2 h-2 rounded-full bg-white"></div>
             <div className="h-[1px] w-12 md:w-24 bg-white"></div>
           </div>
 
-          <div className="inline-block bg-white/10 backdrop-blur-md border border-white/20 px-8 py-4 rounded-full mb-10">
+          <div className="inline-block bg-white/10 backdrop-blur-md border border-white/20 px-8 py-4 rounded-full mb-5">
             <p className="text-xl md:text-3xl font-serif tracking-widest">
               {data.date}
             </p>
           </div>
           
-          <p className="text-lg md:text-xl text-gray-200 font-light tracking-wider uppercase mb-12">
+          <p className="text-lg md:text-xl text-gray-200 font-light tracking-wider uppercase mb-6">
             {data.location}
           </p>
           

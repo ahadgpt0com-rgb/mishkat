@@ -66,12 +66,12 @@ const Navbar: React.FC = () => {
           </div>
           
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-6">
+            <div className="ml-10 flex items-center space-x-5 -mt-1">
               {navLinks.map((link) => (
                 <button
                   key={link.name}
                   onClick={() => handleNavClick(link.id)}
-                  className={`${textClass} hover:text-wedding-primary px-3 py-2 rounded-full text-base font-semibold transition-all duration-300 hover:bg-white/20`}
+                  className={`${textClass} hover:text-wedding-primary px-3 py-1.5 rounded-full text-sm font-semibold transition-all duration-300 hover:bg-white/20`}
                 >
                   {link.name}
                 </button>
