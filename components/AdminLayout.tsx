@@ -1,10 +1,17 @@
 
 import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, Navigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import { ExternalLink, Bell } from 'lucide-react';
 
 const AdminLayout: React.FC = () => {
+    // Check if the user is authenticated as an admin
+    const isAdmin = localStorage.getItem('isAdmin') === 'true';
+
+    if (!isAdmin) {
+        return <Navigate to="/admin" replace />;
+    }
+
     return (
         <div className="flex bg-slate-50 min-h-screen font-sans">
             <AdminSidebar />

@@ -2,6 +2,7 @@
 import React from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
+import AdminLogin from './pages/AdminLogin';
 import AdminLayout from './components/AdminLayout';
 import AdminDashboardOverview from './pages/AdminDashboardOverview';
 import AdminDashboard from './pages/AdminDashboard'; // This is now the Editor
@@ -16,8 +17,8 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         
-        {/* Direct access to Admin Dashboard */}
-        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+        {/* Admin Login Route */}
+        <Route path="/admin" element={<AdminLogin />} />
         
         {/* Protected Admin Routes */}
         <Route path="/admin/dashboard" element={<AdminLayout />}>

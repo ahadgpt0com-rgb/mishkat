@@ -29,8 +29,9 @@ const AdminLogin: React.FC = () => {
     
     try {
       // First try the API
-      await adminApi.login({ username, password });
+      const result: any = await adminApi.login({ username, password });
       
+      localStorage.setItem('admin_token', result.token || 'mock-client-token');
       localStorage.setItem('isAdmin', 'true');
       navigate('/admin/dashboard');
     } catch (err: any) {
@@ -59,15 +60,15 @@ const AdminLogin: React.FC = () => {
 
   if (checkingAuth) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+      <div className="fixed inset-0 w-full min-h-[100dvh] z-[9999] flex items-center justify-center bg-slate-900">
         <Loader2 className="animate-spin text-rose-500" size={48} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-900 px-4">
-      <div className="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md transform transition-all hover:scale-[1.01]">
+    <div className="fixed inset-0 w-full min-h-[100dvh] z-[9999] overflow-y-auto flex items-center justify-center bg-slate-900 px-4 py-8">
+      <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-2xl w-full max-w-md transform transition-all hover:scale-[1.01] my-auto">
         <div className="flex justify-center mb-8">
           <div className="p-4 bg-rose-50 rounded-2xl">
             <Lock className="text-rose-500" size={32} />

@@ -110,7 +110,7 @@ const AdminDashboard: React.FC = () => {
     if (!file) return;
 
     const key = `${section}-${index ?? 'main'}`;
-    setUploadProgress(prev => ({ ...prev, [key]: 0 }));
+    setUploadProgress(prev => ({ ...prev, [key]: 10 }));
 
     try {
       const response = await uploadImage(file, (percent) => {
