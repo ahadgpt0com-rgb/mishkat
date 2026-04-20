@@ -8,6 +8,7 @@ import Gallery from '../components/Gallery';
 import RSVP from '../components/RSVP';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
+import PinAuth from '../components/PinAuth';
 import { getWebsiteConfig } from '../services/storage';
 import { WebsiteConfig } from '../types';
 import { Loader2 } from 'lucide-react';
@@ -32,22 +33,24 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div className="font-bengali text-slate-800">
-      <Navbar />
-      <Hero data={config.hero} />
-      <Countdown targetDateStr={config.countdownDate} />
-      <Story stories={config.stories} />
-      <Events events={config.events} />
-      <Gallery photos={config.gallery} />
-      <RSVP 
-        groomName={config.hero.groomName} 
-        brideName={config.hero.brideName} 
-        date={config.hero.date} 
-        location={config.hero.location}
-      />
-      <Contact contact={config.contact} />
-      <Footer groomName={config.hero.groomName} brideName={config.hero.brideName} />
-    </div>
+    <PinAuth correctPin="1234">
+      <div className="font-sans text-slate-800">
+        <Navbar />
+        <Hero data={config.hero} />
+        <Countdown targetDateStr={config.countdownDate} />
+        <Story stories={config.stories} />
+        <Events events={config.events} />
+        <Gallery photos={config.gallery} />
+        <RSVP 
+          groomName={config.hero.groomName} 
+          brideName={config.hero.brideName} 
+          date={config.hero.date} 
+          location={config.hero.location}
+        />
+        <Contact contact={config.contact} />
+        <Footer groomName={config.hero.groomName} brideName={config.hero.brideName} />
+      </div>
+    </PinAuth>
   );
 };
 

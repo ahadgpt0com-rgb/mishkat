@@ -41,9 +41,9 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
             আমরা বিয়ে করছি
           </p>
           
-          <h1 className="text-6xl md:text-9xl font-cursive mb-6 text-white drop-shadow-2xl leading-tight">
+          <h2 className="text-6xl md:text-9xl font-cursive mb-6 text-white drop-shadow-2xl leading-tight">
             {data.groomName} <span className="text-wedding-primary mx-2">&</span> {data.brideName}
-          </h1>
+          </h2>
           
           <div className="flex items-center justify-center gap-4 mb-8 opacity-80">
             <div className="h-[1px] w-12 md:w-24 bg-white"></div>
