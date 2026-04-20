@@ -1,17 +1,7 @@
 
 import { Guest, ContactMessage, WebsiteConfig } from '../types';
-
-// Base URL for API calls
-const API_URL = '/api';
-
-// Helper for tokens
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('admin_token');
-  return {
-    'Content-Type': 'application/json',
-    'Authorization': token || ''
-  };
-};
+import { db } from '../src/firebase';
+import { doc, getDoc, collection, addDoc, getDocs, setDoc } from 'firebase/firestore';
 
 // Default Configuration (Fallback)
 const DEFAULT_CONFIG: WebsiteConfig = {
@@ -58,25 +48,19 @@ const DEFAULT_CONFIG: WebsiteConfig = {
 
 export const saveRSVP = async (guest: Omit<Guest, 'id' | 'createdAt'>): Promise<boolean> => {
   try {
-    const response = await fetch(`${API_URL}/public/rsvp`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(guest)
-    });
-    return response.ok;
+    await addDoc(collection(db, 'rsvps'), { ...guest, createdAt: Date.now() });
+    return true;
   } catch (error) {
     console.error("Error saving RSVP", error);
     return false;
   }
 };
 
+// Intended for admin use but leaving legacy signature
 export const getRSVPs = async (): Promise<Guest[]> => {
   try {
-    const response = await fetch(`${API_URL}/admin/rsvps`, {
-      headers: getAuthHeaders()
-    });
-    if (response.ok) return await response.json();
-    return [];
+    const sn = await getDocs(collection(db, 'rsvps'));
+    return sn.docs.map(d => ({ id: d.id, ...d.data() } as Guest));
   } catch (error) {
     console.error("Error fetching RSVPs", error);
     return [];
@@ -85,12 +69,8 @@ export const getRSVPs = async (): Promise<Guest[]> => {
 
 export const saveMessage = async (msg: Omit<ContactMessage, 'id' | 'createdAt'>): Promise<boolean> => {
   try {
-    const response = await fetch(`${API_URL}/public/message`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(msg)
-    });
-    return response.ok;
+    await addDoc(collection(db, 'messages'), { ...msg, createdAt: Date.now() });
+    return true;
   } catch (error) {
     console.error("Error saving message", error);
     return false;
@@ -99,11 +79,8 @@ export const saveMessage = async (msg: Omit<ContactMessage, 'id' | 'createdAt'>)
 
 export const getMessages = async (): Promise<ContactMessage[]> => {
   try {
-    const response = await fetch(`${API_URL}/admin/messages`, {
-      headers: getAuthHeaders()
-    });
-    if (response.ok) return await response.json();
-    return [];
+    const sn = await getDocs(collection(db, 'messages'));
+    return sn.docs.map(d => ({ id: d.id, ...d.data() } as ContactMessage));
   } catch (error) {
     console.error("Error fetching messages", error);
     return [];
@@ -112,25 +89,25 @@ export const getMessages = async (): Promise<ContactMessage[]> => {
 
 export const getWebsiteConfig = async (): Promise<WebsiteConfig> => {
   try {
-    const response = await fetch(`${API_URL}/public/config`);
-    if (response.ok) {
-      const data = await response.json();
-      if (data) return data;
+    const docRef = doc(db, 'config', 'main');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data() as WebsiteConfig;
     }
   } catch (error) {
     console.error("Error fetching config from server, using default.", error);
   }
+  
+  // Set default config the very first time to Firebase so it persists
+  await saveWebsiteConfig(DEFAULT_CONFIG).catch(()=>null);
+  
   return DEFAULT_CONFIG;
 };
 
 export const saveWebsiteConfig = async (config: WebsiteConfig): Promise<boolean> => {
   try {
-    const response = await fetch(`${API_URL}/admin/config`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(config)
-    });
-    return response.ok;
+    await setDoc(doc(db, 'config', 'main'), config);
+    return true;
   } catch (error) {
     console.error("Error saving config", error);
     return false;

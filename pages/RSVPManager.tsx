@@ -12,7 +12,7 @@ const RSVPManager: React.FC = () => {
   const fetchRSVPs = async () => {
     try {
       const data = await adminApi.getRSVPs();
-      setRsvps(data);
+      setRsvps(data as Guest[]);
     } catch (error) {
       console.error("Failed to fetch RSVPs", error);
     } finally {

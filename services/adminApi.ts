@@ -1,60 +1,34 @@
 
-/**
- * Production-ready API service for Admin Dashboard
- */
-
-// Use relative URL as both frontend and backend run on same internal network setup.
-const BASE_URL = '/api';
-
-const getHeaders = () => {
-    const token = localStorage.getItem('admin_token');
-    return {
-        'Content-Type': 'application/json',
-        'Authorization': token || ''
-    };
-};
-
-const handleResponse = async (res: Response, endpoint: string) => {
-    if (!res.ok) {
-        console.error(`API Error [${endpoint}]:`, res.status, res.statusText, res.url);
-        
-        const contentType = res.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-            const errorData = await res.json().catch(() => ({}));
-            throw new Error(errorData.message || `Server error: ${res.status}`);
-        }
-        
-        // Handle 404 specifically
-        if (res.status === 404) {
-            throw new Error(`Endpoint not found (404) at ${res.url}. Ensure 'node server.js' is running on port 5001.`);
-        }
-        
-        throw new Error(`Request failed with status ${res.status}`);
-    }
-    
-    const text = await res.text();
-    return text ? JSON.parse(text) : {};
-};
+import { db, auth } from '../src/firebase';
+import { doc, getDoc, setDoc, collection, getDocs, deleteDoc, addDoc } from 'firebase/firestore';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
 export const adminApi = {
     login: async (credentials: any) => {
         try {
-            const res = await fetch(`${BASE_URL}/admin/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(credentials)
-            });
-            return await handleResponse(res, 'login');
-        } catch (error) {
+            // Map admin/admin123 to a dummy Firebase email wrapper if it's the default credentials
+            const email = credentials.username.includes('@') ? credentials.username : `${credentials.username}@wedding.com`;
+            const userCredential = await signInWithEmailAndPassword(auth, email, credentials.password);
+            
+            // Return a dummy token for local storage compatibility
+            return { token: userCredential.user.uid };
+        } catch (error: any) {
             console.error("Login API error:", error);
-            throw error;
+            throw new Error(error.message || "Invalid credentials");
         }
     },
 
     getStats: async () => {
         try {
-            const res = await fetch(`${BASE_URL}/admin/stats`, { headers: getHeaders() });
-            return await handleResponse(res, 'getStats');
+            const rsvps = await adminApi.getRSVPs();
+            const messages = await adminApi.getMessages();
+            return {
+                totalRSVPs: rsvps.length,
+                pendingRSVPs: 0, // Not tracked in local either
+                totalMessages: messages.length,
+                newMessages: messages.length,
+                totalPhotos: 0
+            };
         } catch (e) {
             console.error("Get Stats error:", e);
             throw e;
@@ -63,8 +37,8 @@ export const adminApi = {
 
     getRSVPs: async () => {
         try {
-            const res = await fetch(`${BASE_URL}/admin/rsvps`, { headers: getHeaders() });
-            return await handleResponse(res, 'getRSVPs');
+            const snapshot = await getDocs(collection(db, 'rsvps'));
+            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         } catch (error) {
             console.error("Get RSVPs error:", error);
             throw error;
@@ -73,21 +47,54 @@ export const adminApi = {
 
     deleteRSVP: async (id: string) => {
         try {
-            const res = await fetch(`${BASE_URL}/admin/rsvps/${id}`, {
-                method: 'DELETE',
-                headers: getHeaders()
-            });
-            return await handleResponse(res, 'deleteRSVP');
+            await deleteDoc(doc(db, 'rsvps', id));
+            return { success: true };
         } catch (error) {
             console.error("Delete RSVP error:", error);
             throw error;
         }
     },
 
+    getMessages: async () => {
+        try {
+            const snapshot = await getDocs(collection(db, 'messages'));
+            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        } catch (error) {
+            console.error("Get messages error:", error);
+            throw error;
+        }
+    },
+
+    getConfig: async () => {
+        const docRef = doc(db, 'config', 'main');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return docSnap.data();
+        }
+        return null;
+    },
+
+    saveConfig: async (config: any) => {
+        try {
+            await setDoc(doc(db, 'config', 'main'), config);
+            return { success: true };
+        } catch (error) {
+            console.error("Save config error:", error);
+            throw error;
+        }
+    },
+
+    // Handling Media by saving Base64 to Firestore (Compresed strictly before upload)
     getMedia: async () => {
         try {
-            const res = await fetch(`${BASE_URL}/admin/media`, { headers: getHeaders() });
-            return await handleResponse(res, 'getMedia');
+            const snapshot = await getDocs(collection(db, 'media'));
+            return snapshot.docs.map(doc => ({
+                name: doc.id,
+                url: doc.data().url,
+                type: doc.data().type,
+                size: doc.data().size,
+                createdAt: doc.data().createdAt
+            }));
         } catch (error) {
             console.error("Get Media error:", error);
             throw error;
@@ -96,11 +103,8 @@ export const adminApi = {
 
     deleteMedia: async (filename: string) => {
         try {
-            const res = await fetch(`${BASE_URL}/admin/media/${filename}`, {
-                method: 'DELETE',
-                headers: getHeaders()
-            });
-            return await handleResponse(res, 'deleteMedia');
+            await deleteDoc(doc(db, 'media', filename));
+            return { success: true };
         } catch (error) {
             console.error("Delete Media error:", error);
             throw error;
@@ -108,36 +112,69 @@ export const adminApi = {
     },
 
     uploadFile: async (file: File, onProgress?: (p: number) => void) => {
-        return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            const formData = new FormData();
-            formData.append('image', file);
+        return new Promise(async (resolve, reject) => {
+            try {
+                // Compress Image
+                const compressedDataUrl = await compressImage(file);
+                
+                // Save to Firestore
+                const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                
+                if (onProgress) onProgress(50);
 
-            xhr.upload.addEventListener('progress', (e) => {
-                if (e.lengthComputable && onProgress) {
-                    onProgress(Math.round((e.loaded / e.total) * 100));
-                }
-            });
-
-            xhr.onload = () => {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    try {
-                        resolve(JSON.parse(xhr.responseText));
-                    } catch (e) {
-                        reject(new Error('Invalid JSON response from server'));
-                    }
-                } else {
-                    reject(new Error(`Upload failed: ${xhr.status} ${xhr.statusText}`));
-                }
-            };
-
-            xhr.onerror = () => {
-                reject(new Error('Network error. Check if server is running on port 5001.'));
-            };
-            
-            xhr.open('POST', `${BASE_URL.replace('/api', '')}/api/upload`);
-            xhr.setRequestHeader('Authorization', localStorage.getItem('admin_token') || '');
-            xhr.send(formData);
+                await setDoc(doc(db, 'media', filename), {
+                    url: compressedDataUrl,
+                    type: file.type.includes('video') ? 'video' : 'image',
+                    size: compressedDataUrl.length,
+                    createdAt: Date.now()
+                });
+                
+                if (onProgress) onProgress(100);
+                resolve({ success: true, imageUrl: compressedDataUrl });
+            } catch (error) {
+                reject(error);
+            }
         });
     }
+};
+
+// Helper to compress image to base64
+const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target?.result as string;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                // Max dimensions to fit in 1MB Firestore limit
+                const MAX_WIDTH = 800;
+                const MAX_HEIGHT = 800;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx?.drawImage(img, 0, 0, width, height);
+                // Heavily compress JPEG
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                resolve(dataUrl);
+            };
+            img.onerror = error => reject(error);
+        };
+        reader.onerror = error => reject(error);
+    });
 };
