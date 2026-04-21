@@ -239,7 +239,7 @@ const AdminDashboard: React.FC = () => {
                         </div>
                         {uploadProgress['hero-main'] !== undefined && <ProgressOverlay percent={uploadProgress['hero-main']} />}
                     </div>
-                    <p className="text-xs text-slate-400 mt-2 text-center">Supported: JPG, PNG, MP4. Max 50MB.</p>
+                    <p className="text-xs text-slate-400 mt-2 text-center">Supported: JPG, PNG. (Images automatically compressed)</p>
                 </div>
             </div>
           </div>

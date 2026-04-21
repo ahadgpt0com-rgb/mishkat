@@ -114,25 +114,29 @@ export const adminApi = {
     uploadFile: async (file: File, onProgress?: (p: number) => void) => {
         return new Promise(async (resolve, reject) => {
             try {
+                if (file.type.includes('video')) {
+                    throw new Error("ভিডিও আপলোড বর্তমানে সমর্থিত নয়। শুধু ছবি আপলোড করুন।");
+                }
+                
                 // Compress Image
                 const compressedDataUrl = await compressImage(file);
                 
-                // Save to Firestore
+                // Save to Firestore for media library
                 const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9]/g, '_')}`;
                 
                 if (onProgress) onProgress(50);
 
                 await setDoc(doc(db, 'media', filename), {
                     url: compressedDataUrl,
-                    type: file.type.includes('video') ? 'video' : 'image',
+                    type: 'image',
                     size: compressedDataUrl.length,
                     createdAt: Date.now()
                 });
                 
                 if (onProgress) onProgress(100);
                 resolve({ success: true, imageUrl: compressedDataUrl });
-            } catch (error) {
-                reject(error);
+            } catch (error: any) {
+                reject(new Error(error.message || "Failed to upload image"));
             }
         });
     }
@@ -142,17 +146,17 @@ export const adminApi = {
 const compressImage = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.readAsDataURL(file);
+        reader.onerror = () => reject(new Error("Failed to read file"));
         reader.onload = (event) => {
             const img = new Image();
-            img.src = event.target?.result as string;
+            img.onerror = () => reject(new Error("Invalid image file format"));
             img.onload = () => {
                 const canvas = document.createElement('canvas');
                 let width = img.width;
                 let height = img.height;
-                // Max dimensions to fit in 1MB Firestore limit
-                const MAX_WIDTH = 800;
-                const MAX_HEIGHT = 800;
+                // Max dimensions to fit in 1MB Firestore limit aggressively
+                const MAX_WIDTH = 600;
+                const MAX_HEIGHT = 600;
 
                 if (width > height) {
                     if (width > MAX_WIDTH) {
@@ -165,16 +169,19 @@ const compressImage = (file: File): Promise<string> => {
                         height = MAX_HEIGHT;
                     }
                 }
-                canvas.width = width;
-                canvas.height = height;
+                canvas.width = Math.max(1, Math.floor(width));
+                canvas.height = Math.max(1, Math.floor(height));
                 const ctx = canvas.getContext('2d');
-                ctx?.drawImage(img, 0, 0, width, height);
+                if (!ctx) {
+                    return reject(new Error("Canvas context is not supported"));
+                }
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 // Heavily compress JPEG
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
                 resolve(dataUrl);
             };
-            img.onerror = error => reject(error);
+            img.src = event.target?.result as string;
         };
-        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
     });
 };

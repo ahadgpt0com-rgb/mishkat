@@ -46,8 +46,8 @@ const MediaLibrary: React.FC = () => {
         try {
             await adminApi.uploadFile(file, (p) => setProgress(p));
             await fetchMedia(); // Refresh list
-        } catch (error) {
-            alert('Upload failed!');
+        } catch (error: any) {
+            alert('Upload failed: ' + (error?.message || "Unknown error"));
         } finally {
             setUploading(false);
             setProgress(0);
