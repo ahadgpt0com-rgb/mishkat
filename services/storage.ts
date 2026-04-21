@@ -13,7 +13,8 @@ const DEFAULT_CONFIG: WebsiteConfig = {
     image: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
   },
   countdownDate: '2024-12-15T18:00:00',
-  pinCode: '1234',
+  pinCode: '0130',
+  adminPassword: 'admin',
   stories: [
     {
       year: '২০২০',
@@ -116,5 +117,5 @@ export const saveWebsiteConfig = async (config: WebsiteConfig): Promise<boolean>
 
 // Admin auth check (Offline fallback only)
 export const checkAdminAuth = (id: string, password: string): boolean => {
-  return id === 'admin' && password === 'admin123';
+  return id === 'admin' && (password === 'admin123' || password === 'admin');
 };

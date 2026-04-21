@@ -33,10 +33,9 @@ const AdminLayout: React.FC = () => {
 
                         <Link 
                             to="/" 
-                            target="_blank" 
                             className="flex items-center gap-2 text-sm font-semibold text-wedding-primary hover:text-rose-700 transition-colors bg-rose-50 px-4 py-2 rounded-lg hover:bg-rose-100"
                         >
-                            <span>Live Website</span>
+                            <span>Home Page</span>
                             <ExternalLink size={16} />
                         </Link>
                         

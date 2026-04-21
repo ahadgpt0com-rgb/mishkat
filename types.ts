@@ -43,6 +43,7 @@ export interface WebsiteConfig {
   };
   countdownDate: string;
   pinCode?: string;
+  adminPassword?: string;
   stories: {
     year: string;
     title: string;

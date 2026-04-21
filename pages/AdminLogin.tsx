@@ -28,32 +28,34 @@ const AdminLogin: React.FC = () => {
     setError('');
     
     try {
-      // First try the API
-      const result: any = await adminApi.login({ username, password });
-      
-      localStorage.setItem('admin_token', result.token || 'mock-client-token');
-      localStorage.setItem('isAdmin', 'true');
-      navigate('/admin/dashboard');
-    } catch (err: any) {
-      console.error("API Login failed:", err);
+      // Fetch dynamic config to check admin password
+      const config = await adminApi.getConfig();
+      const validUsername = 'admin';
+      const validPassword = config?.adminPassword || 'admin';
 
-      // Fallback: If API fails (e.g. server down), check client-side credentials
-      // This ensures the admin can always enter if credentials are correct
+      if (username === validUsername && password === validPassword) {
+        // Success
+        localStorage.setItem('admin_token', 'local-admin');
+        localStorage.setItem('isAdmin', 'true');
+        navigate('/admin/dashboard');
+        return;
+      } else {
+        setError('ভুল ইউজারনেম বা পাসওয়ার্ড! (Invalid Credentials)');
+        setLoading(false);
+        return;
+      }
+
+    } catch (err: any) {
+      console.error("Login verification failed:", err);
+      // Fallback in case of network issue
       if (checkAdminAuth(username, password)) {
-         console.warn("Backend unreachable, logging in with client-side fallback");
-         // Set a mock token for client-side functionality
+         console.warn("Backend unreachable, logging in with fallback");
          localStorage.setItem('admin_token', 'mock-client-token');
          localStorage.setItem('isAdmin', 'true');
          navigate('/admin/dashboard');
          return;
       }
-
-      // If credentials were wrong in both API and Client check
-      if (err.message === 'Authentication failed' || !checkAdminAuth(username, password)) {
-        setError('ভুল ইউজারনেম বা পাসওয়ার্ড! (Invalid Credentials)');
-      } else {
-        setError('সার্ভার এরর। দয়া করে আবার চেষ্টা করুন।');
-      }
+      setError('সার্ভার এরর। দয়া করে আবার চেষ্টা করুন।');
       setLoading(false);
     }
   };

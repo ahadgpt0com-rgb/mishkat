@@ -421,13 +421,13 @@ const AdminDashboard: React.FC = () => {
           </div>
       )}
 
-      {/* SECURITY SECTION */}
+     {/* SECURITY SECTION */}
       {activeTab === 'security' && (
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 animate-fade-in max-w-3xl">
              <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
                 <Lock className="text-rose-500" /> Security
              </h3>
-             <div className="space-y-5">
+             <div className="space-y-6">
                  <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
                     <h4 className="text-lg font-bold text-slate-800 mb-2">Guest Access PIN</h4>
                     <p className="text-sm text-slate-500 mb-4">
@@ -443,6 +443,23 @@ const AdminDashboard: React.FC = () => {
                              // Only allow exactly 4 digits
                              const val = e.target.value.replace(/\D/g, '').slice(0, 4);
                              setConfig({...config, pinCode: val});
+                          }} 
+                        />
+                    </div>
+                 </div>
+
+                 <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <h4 className="text-lg font-bold text-slate-800 mb-2">Admin Console Password</h4>
+                    <p className="text-sm text-slate-500 mb-4">
+                      Change the password used to log in to this admin console. (Default username is 'admin')
+                    </p>
+                    <div className="max-w-xs">
+                        <InputGroup 
+                          label="Admin Password" 
+                          value={config.adminPassword || ''} 
+                          type="text"
+                          onChange={(e:any) => {
+                             setConfig({...config, adminPassword: e.target.value});
                           }} 
                         />
                     </div>

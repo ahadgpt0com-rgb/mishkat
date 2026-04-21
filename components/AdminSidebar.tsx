@@ -8,6 +8,7 @@ import {
 
 const AdminSidebar: React.FC = () => {
     const navItems = [
+        { name: 'Live Website', icon: Globe, path: '/' },
         { name: 'Overview', icon: LayoutDashboard, path: '/admin/dashboard' },
         { name: 'Website Editor', icon: Edit3, path: '/admin/dashboard/editor' },
         { name: 'RSVP List', icon: Users, path: '/admin/dashboard/rsvps' },
