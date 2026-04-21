@@ -447,22 +447,9 @@ const AdminDashboard: React.FC = () => {
                         />
                     </div>
                  </div>
-
-                 <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
-                    <h4 className="text-lg font-bold text-slate-800 mb-2">Admin Console Password</h4>
-                    <p className="text-sm text-slate-500 mb-4">
-                      Change the password used to log in to this admin console. (Default username is 'admin')
-                    </p>
-                    <div className="max-w-xs">
-                        <InputGroup 
-                          label="Admin Password" 
-                          value={config.adminPassword || ''} 
-                          type="text"
-                          onChange={(e:any) => {
-                             setConfig({...config, adminPassword: e.target.value});
-                          }} 
-                        />
-                    </div>
+                 
+                 <div className="p-4 bg-blue-50 text-blue-700 rounded-xl text-sm font-medium">
+                     Looking to change your Admin Console password? You can find that option in the <b>Settings</b> menu in the sidebar.
                  </div>
              </div>
           </div>

@@ -1,10 +1,37 @@
 
-import React, { useState } from 'react';
-import { Save, Lock, Bell, Globe, Mail, Eye, Shield, ToggleLeft, ToggleRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Save, Lock, Bell, Globe, Mail, Eye, Shield, ToggleLeft, ToggleRight, Loader2 } from 'lucide-react';
+import { getWebsiteConfig, saveWebsiteConfig } from '../services/storage';
 
 const Settings: React.FC = () => {
   const [notifications, setNotifications] = useState(true);
   const [maintenance, setMaintenance] = useState(false);
+  const [password, setPassword] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  // You can also load config here if you want to sync, but we only need to write the new password.
+  const handleUpdatePassword = async () => {
+      if (!password.trim()) {
+          alert('Please enter a new password');
+          return;
+      }
+      setSaving(true);
+      try {
+          const config = await getWebsiteConfig();
+          config.adminPassword = password;
+          const success = await saveWebsiteConfig(config);
+          if (success) {
+              alert('Password updated successfully!');
+              setPassword('');
+          } else {
+              alert('Failed to update password');
+          }
+      } catch (e: any) {
+          alert('Error: ' + e.message);
+      } finally {
+          setSaving(false);
+      }
+  };
 
   return (
     <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">
@@ -51,14 +78,25 @@ const Settings: React.FC = () => {
               
               <div className="space-y-4">
                   <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Admin Email</label>
-                      <input type="email" value="admin@wedding.com" disabled className="w-full px-4 py-2 bg-slate-100 border border-slate-200 rounded-lg text-slate-500 cursor-not-allowed" />
+                      <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Admin Email / Username</label>
+                      <input type="text" value="admin" disabled className="w-full px-4 py-2 bg-slate-100 border border-slate-200 rounded-lg text-slate-500 cursor-not-allowed" />
                   </div>
                   <div>
                       <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Change Password</label>
-                      <input type="password" placeholder="New Password" className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500/20 outline-none" />
+                      <input 
+                         type="password" 
+                         value={password}
+                         onChange={(e) => setPassword(e.target.value)}
+                         placeholder="New Password" 
+                         className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500/20 outline-none" 
+                      />
                   </div>
-                  <button className="bg-slate-900 text-white px-6 py-2 rounded-lg font-bold text-sm mt-2 hover:bg-slate-800 transition-colors">
+                  <button 
+                     onClick={handleUpdatePassword}
+                     disabled={saving}
+                     className="bg-slate-900 text-white px-6 py-2 rounded-lg font-bold text-sm mt-2 hover:bg-slate-800 transition-colors flex items-center gap-2 disabled:opacity-50"
+                  >
+                      {saving && <Loader2 className="animate-spin" size={16} />}
                       Update Password
                   </button>
               </div>

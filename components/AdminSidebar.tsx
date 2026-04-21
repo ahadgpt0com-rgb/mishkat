@@ -51,15 +51,28 @@ const AdminSidebar: React.FC = () => {
 
             {/* Footer Area */}
             <div className="p-4 border-t border-slate-800 bg-slate-950">
-                <div className="bg-slate-800/50 rounded-xl p-4 flex items-center gap-3">
-                    <Globe size={20} className="text-slate-400" />
-                    <div>
-                        <p className="text-xs text-slate-400">Server Status</p>
-                        <div className="flex items-center gap-1.5 mt-1">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <span className="text-xs font-bold text-emerald-500">Online</span>
+                <div className="bg-slate-800/50 rounded-xl p-4 flex flex-col gap-3">
+                    <div className="flex items-center gap-3">
+                        <Globe size={20} className="text-slate-400" />
+                        <div>
+                            <p className="text-xs text-slate-400">Server Status</p>
+                            <div className="flex items-center gap-1.5 mt-1">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span className="text-xs font-bold text-emerald-500">Online</span>
+                            </div>
                         </div>
                     </div>
+                    
+                    <button 
+                        onClick={() => {
+                            localStorage.removeItem('admin_token');
+                            localStorage.removeItem('isAdmin');
+                            window.location.href = '/#/admin';
+                        }}
+                        className="w-full py-2 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white rounded-lg text-sm font-bold transition-colors mt-2"
+                    >
+                        Log Out
+                    </button>
                 </div>
             </div>
         </aside>
