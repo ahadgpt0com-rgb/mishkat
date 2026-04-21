@@ -84,7 +84,8 @@ const PinAuth: React.FC<PinAuthProps> = ({ children, correctPin }) => {
         
         <h2 className="text-3xl md:text-4xl font-cursive text-wedding-primary mb-2 text-center drop-shadow-sm">শুকরিয়া</h2>
         <p className="text-slate-500 mb-8 sm:mb-10 text-center text-sm md:text-base px-2 sm:px-4 font-medium">
-          অনুগ্রহ করে আমন্ত্রণে থাকা ৪-ডিজিটের পিন কোডটি প্রবেশ করান।
+          অনুগ্রহ করে আমন্ত্রণে থাকা ৪-ডিজিটের পিন কোডটি প্রবেশ করান। <br>
+            পিন কোড এর জন্য এই নাম্বারের  01329183502 whatsapp- এ যোগাযোগ করুন 
         </p>
 
         <div className="flex gap-3 sm:gap-5 justify-center mb-6 sm:mb-8 w-full max-w-xs mx-auto">
